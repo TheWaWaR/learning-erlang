@@ -1,0 +1,8 @@
+
+* Steps
+** TODO Erlang basic concepts
+** Erlang Design Principles
+** Familiar with OTP libraries
+** Learn hot code replacement
+** Learn distribute system
+** Rewrite (Room, User, Visitor) system
