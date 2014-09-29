@@ -1,0 +1,4 @@
+
+* <information>
+  + init: [2014-09-23 23:40]
+  + link: http://blog.bot.co.za/en/article/349/an-erlang-otp-tutorial-for-beginners
