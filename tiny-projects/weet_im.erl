@@ -6,6 +6,8 @@
 
 -export([start/1]).
 
+
+
 start(Port) ->
     case gen_tcp:listen(Port, [binary,
                                {packet, 0},
@@ -18,16 +20,15 @@ start(Port) ->
     end.
 
 
-
 accept_loop(LSock) ->
     case gen_tcp:accept(LSock) of
         {ok, Sock} ->
             io:fwrite("Accept one: ~p~n", [Sock]),
-            spawn(fun() -> do_recv(Sock) end);
+            spawn(fun() -> do_recv(Sock) end),
+            accept_loop(LSock);
         {error, Reason} ->
             io:fwrite("Accept error: ~p~n", [Reason])
-    end,
-    accept_loop(LSock).
+    end.
 
 
 do_recv(Sock) ->
