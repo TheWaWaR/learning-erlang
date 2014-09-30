@@ -26,14 +26,14 @@ accept_loop(LSock) ->
     case gen_tcp:accept(LSock) of
         {ok, Sock} ->
             io:fwrite("Accept one: ~p~n", [Sock]),
-            spawn(fun() -> do_recv(Sock) end),
+            spawn(fun() -> serv_client(Sock) end),
             accept_loop(LSock);
         {error, Reason} ->
             io:fwrite("Accept error: ~p~n", [Reason])
     end.
 
 
-do_recv(Sock) ->
+serv_client(Sock) ->
     case gen_tcp:recv(Sock, 0 ) of
         {ok, Packet} ->
             CharList = binary_to_list(Packet),
@@ -46,22 +46,13 @@ do_recv(Sock) ->
             %% CharList = binary_to_list(Packet),
             %% PackSend = io_lib:format(">> Your input: <~s>~n",
             %%                          [lists:sublist(CharList, length(CharList)-2)]),
-            case proc_packet(Sock, Packet) of
-                error ->
+            case gen_tcp:send(Sock, Packet) of
+                {error, Reason} ->
+                    io:fwrite("Send error: ~p => ~p~n", [Sock, Reason]),
                     gen_tcp:close(Sock);
                 ok ->
-                    do_recv(Sock)
+                    serv_client(Sock)
             end;
         {error, Reason} ->
             io:fwrite("Receive error: ~p =>  ~p~n", [Sock, Reason])
-    end.
-
-
-proc_packet(Sock, Packet) ->
-    case gen_tcp:send(Sock, Packet) of
-        {error, Reason} ->
-            io:fwrite("Send error: ~p => ~p~n", [Sock, Reason]),
-            error;
-        ok ->
-            ok
     end.
