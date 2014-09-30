@@ -6,8 +6,10 @@
 
 -export([start/1]).
 
+-define(PREFIX_LEN, 8+1).
 
 
+-spec start(integer()) -> _.
 start(Port) ->
     case gen_tcp:listen(Port, [binary,
                                {packet, 0},
@@ -34,14 +36,17 @@ accept_loop(LSock) ->
 do_recv(Sock) ->
     case gen_tcp:recv(Sock, 0 ) of
         {ok, Packet} ->
-            io:fwrite("Receive packet: ~p => ~p~n", [Sock, Packet]),
+            CharList = binary_to_list(Packet),
+            {Head, [_ | Body]} = lists:split(?PREFIX_LEN-1, CharList),
+            {Length, _} = string:to_integer(Head),
+            io:fwrite("Receive packet: ~p => ~p:~s~n", [Sock, Length, Body]),
             %% PackSend = io_lib:format("Your input: <~s>~n",
             %%                          [re:replace(Packet, "(^\\s+)|(\\s+$)", "",
             %%                                      [global, {return, list}])]),
-            CharList = binary_to_list(Packet),
-            PackSend = io_lib:format(">> Your input: <~s>~n",
-                                     [lists:sublist(CharList, length(CharList)-2)]),
-            case proc_packet(Sock, PackSend) of
+            %% CharList = binary_to_list(Packet),
+            %% PackSend = io_lib:format(">> Your input: <~s>~n",
+            %%                          [lists:sublist(CharList, length(CharList)-2)]),
+            case proc_packet(Sock, Packet) of
                 error ->
                     gen_tcp:close(Sock);
                 ok ->
@@ -60,4 +65,3 @@ proc_packet(Sock, Packet) ->
         ok ->
             ok
     end.
-            
