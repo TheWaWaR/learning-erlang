@@ -39,7 +39,7 @@ do_recv(Sock) ->
             CharList = binary_to_list(Packet),
             {Head, [_ | Body]} = lists:split(?PREFIX_LEN-1, CharList),
             {Length, _} = string:to_integer(Head),
-            io:fwrite("Receive packet: ~p => ~p:~s~n", [Sock, Length, Body]),
+            io:fwrite("Receive packet: ~p => ~p:<~p>~n", [Sock, Length, Body]),
             %% PackSend = io_lib:format("Your input: <~s>~n",
             %%                          [re:replace(Packet, "(^\\s+)|(\\s+$)", "",
             %%                                      [global, {return, list}])]),

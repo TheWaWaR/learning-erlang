@@ -78,7 +78,10 @@ func send(conn net.Conn, body []byte) {
 func receiving(conn net.Conn) {
 	for ; running ; {
 		body, err := recv(conn)
-		if err != nil { running = false }
+		if err != nil {
+			running = false
+			break
+		}
 		print(string(body))
 	}
 }
@@ -89,7 +92,10 @@ func inputing(conn net.Conn) {
 	println(">> Connected!")
 	for ; running ; {
 		line, err := reader.ReadSlice('\n')
-		if err != nil { running = false }
+		if err != nil {
+			running = false
+			break
+		}
 		send(conn, line)
 	}
 	println(">> Stopped!")
