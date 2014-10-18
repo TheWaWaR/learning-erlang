@@ -1,7 +1,7 @@
 
 -module(first_shot).
 
--export([fac/1, len/1, reverse/1]).
+-export([fac/1, len/1, reverse/1, zip/2]).
 
 
 fac(0) -> 1;
@@ -19,3 +19,10 @@ tail_len([_ | T], Acc) -> tail_len(T, Acc+1).
 reverse(L) -> tail_reverse(L, []).
 tail_reverse([], Acc) -> Acc;
 tail_reverse([H|T], Acc) -> tail_reverse(T, [H|Acc]).
+
+
+zip(A, B) -> lists:reverse(tail_zip(A, B, [])).
+tail_zip([], _, Acc) -> Acc;
+tail_zip(_, [], Acc) -> Acc;
+tail_zip([Ha|Ta], [Hb|Tb], Acc) -> tail_zip(Ta, Tb, [{Ha, Hb} | Acc]).
+
